@@ -145,3 +145,29 @@ Notably, the current solution has a few limitations that I'll be addressing as I
 
 ## STAGE 3
 
+In this stage I'll configure a Key Vault to store the azureadmin password, and I'll update the template files to reference the secret for secure retrieval.
+
+First I created a new KeyVault in the Azure Portal, selecting the "webapp-auto-rg" resource group, and the same region as the VM.
+Next, I granted myself data plane access to Key Vault by selecting the new Key Vault > Access Control (IAM) > Add Role Assignment. I selected the "Key Vault Administrator" role, and added myself as a member to the role.
+
+![alt text](image-20.png)
+
+Then, while still in the Key Vault, I selected Objects > Secrets > Generate/Import and used the Manual upload method to add the 'adminPassword' secret.
+
+Next I edited the deploy template file, updating the "adminPassword" parameter to use the secret from the Key Vault instead of manually entered string.
+
+before:
+
+![alt text](image-22.png)
+
+after:
+
+![alt text](image-21.png)
+
+Finally, I re-ran the deployment using the updated parameters json file.
+
+![alt text](image-23.png)
+
+Back in the Azure Portal, I browsed to Resource Groups > webapp-auto-rg and selected Settings > Deployments. By selecting the listed "stage3-deploy" deployment, I saw that the deployment was complete with no errors.
+
+So this is great. I was able to udpate the deployment so that it uses the secret from the Key Vault, no manual entry of any admin credentials required.
