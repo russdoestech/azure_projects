@@ -17,7 +17,7 @@ I'll create a Key Vault to improve security, and add a custom script extension t
 
 
 
-## Stage 1
+## STAGE 1
 
 ### Create the VM
 
@@ -45,13 +45,103 @@ In order to allow Internet access to the web application, I also needed to add a
 
 #### SSH into the VM and setup the Web app
 
-In PowerShell, ran 'SSH username@Public_IP -i SSH_Key' to connect to the VM using SSH.
+In PowerShell, ran 'SSH username@Public_IP' to connect to the VM using SSH.
 
-![alt text](image-2.png)
+![alt text](image-13.png)
 
 Once SSH'ed into the VM, I used apt-get to udpate the system and to install docker.io, then cloned and built the web app from a GitHub respository.
 
 Once that was compolete I confirmed that I was able to access the web app via its public IP address.
 
 ![alt text](image-3.png)
+
+
+
+## STAGE 2
+
+### Create an ARM template
+
+I chose to use the Azure CLI to create the ARM template, so I opened PowerShell and ran the 'az login' command, and signed into my Azure subscription.
+
+First, I viewed the existing deployment
+
+![alt text](image-5.png)
+
+From the results of that command, I located the name of the deployment.
+
+![alt text](image-4.png)
+
+From there I pulled additional information about the deployment using the resource group name.
+
+![alt text](image-6.png)
+
+I created local folder for the template files and changed into that directory.
+
+I then exported the ARM template that the Azure Portal created:
+
+![alt text](image-7.png)
+
+as well as the parameters file that the Azure Portal created:
+
+![alt text](image-8.png)
+
+
+### Update the NSG in the template
+
+Since the template files I downloaded only included the configuration that I specified when the VM was created, and not the changes I made to the NSG to lock down SSH and HTTP (to only my IP), I needed to locate the NSG parameters in the json file I downloaded.
+
+I used vscode to view and edit the json file.
+
+![alt text](image-9.png)
+
+The NSG parameters were listed as shown below.
+
+![alt text](image-10.png)
+
+I modified the SSH > "sourceAddressPrefix" line with my IP address, and added a "Web" rule for HTTP traffic, also locked down to my IP address.
+
+![alt text](image-11.png)
+
+
+### Deploy the solution
+
+Next, I moved on to deploying a new VM using the new template files. First, I created a new resource group, "webapp-auto-rg"
+
+![alt text](image-12.png)
+
+For the time being I used the admin password to create the new VM from template, so to improve security (a little bit) is used bash to create a variable to store the admin password and passed that variable to the commmand rather than typing the admin password openly in the terminal.
+
+![alt text](image-14.png)
+
+Then I deployed the solution using the modified template files.
+
+![alt text](image-15.png)
+
+![alt text](image-16.png)
+
+On the Azure Portal, I browsed to the new resource group, "webapp-auto-rg" and confirmed that the new NSG had the SSH and HTTP Inbound rules.
+
+I then went into the properties of the new VM, and copied the public IP. I confirmed that I was able to SSH into the new VM.
+
+![alt text](image-17.png)
+
+![alt text](image-18.png)
+
+and also confirmed that I could not access the webapp on the new VM IP address, which makes sense, as it has not been setup yet.
+
+![alt text](image-19.png)
+
+### Clean Up
+
+Since I no longer require the original VM, or its associated resources, I deleted "webapp-manual-rg" using the Azure Portal. No point in paying for resources for any longer than they are required.
+
+### Progress
+
+Notably, the current solution has a few limitations that I'll be addressing as I move forward in the project, such as:
+
+* I had to manually install Docker
+* I had to manually build and deploy the web app
+* I had to input the admin credentials for the VM manually
+
+## STAGE 3
 
