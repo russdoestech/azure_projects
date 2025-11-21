@@ -227,3 +227,25 @@ At this point in the project I've addressed a few of the shortcomings of the ini
 * The azureadmin secret is handled via Key Vault instead of manual plaintext entry
 * Docker is now installed/configured automatically during deployment
 * The Web App is automatically configured during deployment
+
+## Post-project cleanup
+
+Since this is just a practice project, I'm going to cleanup and delete all the resources created during the project, as I don't want to incur any unnecessary charges.
+
+In the Azure Portal, I'm going to 'Resource Groups' and remove the 'webapp-auto-rg' group, which will remove all associated resources, such as the VM, NSG, etc.
+
+Also, make sure you delete your Key Vault if it wasn't deployed to the same resource group as your other resources.
+
+A quick note, if you create any VMs as part of a project, and you don't check the box for "Delete NIC when VM is deleted" make sure you locate those resources (NICs) and delete them manually, or you will continue to be charged for them.
+
+A quick way to check is to go to Azure Resource Manager > Tools > Resource Graph Explorer, paste in the following query, then run it.
+
+Resources
+| where type has "microsoft.network/networkinterfaces"
+| where "{nicWithPrivateEndpoints}" !has id
+| where properties !has 'virtualmachine'
+
+More details:https://www.geeksforgeeks.org/devops/microsoft-azure-find-orphaned-network-interface-cardsnics/
+
+![alt text](image-32.png)
+
