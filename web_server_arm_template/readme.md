@@ -236,20 +236,19 @@ In the Azure Portal, I'm going to 'Resource Groups' and remove the 'webapp-auto-
 
 Also, make sure you delete your Key Vault if it wasn't deployed to the same resource group as your other resources.
 
-A quick note, if you create any VMs as part of a project, and you don't check the box for "Delete NIC when VM is deleted" make sure you locate those resources (NICs) and delete them manually, or you will continue to be charged for them.
+A quick note, if you create any VMs as part of a project, and you don't check the box for "Delete NIC when VM is deleted" on the Networking tab, make sure you locate those resources (NICs) and delete them manually, or you will continue to be charged for them.
+
+![alt text](image-32.png)
 
 A quick way to check is to go to Azure Resource Manager > Tools > Resource Graph Explorer, paste in the following query, then run it.
-
+```
 Resources
-
 | where type has "microsoft.network/networkinterfaces"
-
 | where "{nicWithPrivateEndpoints}" !has id
-
 | where properties !has 'virtualmachine'
-
+```
 
 More details: https://www.geeksforgeeks.org/devops/microsoft-azure-find-orphaned-network-interface-cardsnics/
 
-![alt text](image-32.png)
+
 
