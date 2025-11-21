@@ -171,3 +171,59 @@ Finally, I re-ran the deployment using the updated parameters json file.
 Back in the Azure Portal, I browsed to Resource Groups > webapp-auto-rg and selected Settings > Deployments. By selecting the listed "stage3-deploy" deployment, I saw that the deployment was complete with no errors.
 
 So this is great. I was able to udpate the deployment so that it uses the secret from the Key Vault, no manual entry of any admin credentials required.
+
+## PHASE 4
+
+In this phase of the project I'm going to modify the ARM template files to automate the configuration of Docker, as well as the build/deploy of the web app container, so that these actions don't have to be performed manually.
+
+### Setup temlate files
+
+I start by making copies of the existing ARM template files
+
+![alt text](image-24.png)
+
+### Update the template files
+
+Then I modified the "stage4-deploy.json" ARM template file with the following.
+
+* I added the following to the of the 'parameters' section of the file:
+
+![alt text](image-25.png)
+
+* and I added the following to the 'resources' section of the file:
+
+![alt text](image-26.png)
+
+Next, I modified the "stage4-params.json" file with a pointer to the web app. 
+(the screenshot is cut short to fit in the write-up)
+
+![alt text](image-27.png)
+
+### Deploy the update
+
+At this point I'm ready to deploy the update, so I login to Azure CLI, and make sure I'm in the directory with the ARM templates. Then I run the command to deploy the update using those files.
+
+![alt text](image-28.png)
+
+### Check the deployment status
+
+In the Azure Portal, I navigate to the 'webapp-auto-rg' resource group resource, then select Settings > Deployments > stage4-deploy. The deployment is complete, with no errors.
+
+![alt text](image-29.png)
+
+### Check that the website is working
+
+To check that the website/webapp is working, I copy the public IP of the webvm1 VM and paste it into a browser tab.
+
+![alt text](image-31.png)
+
+![alt text](image-30.png)
+
+## Progress
+
+At this point in the project I've addressed a few of the shortcomings of the initial manual deployment.
+
+* The VM is deployed from the CLI using ARM templates
+* The azureadmin secret is handled via Key Vault instead of manual plaintext entry
+* Docker is now installed/configured automatically during deployment
+* The Web App is automatically configured during deployment
