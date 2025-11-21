@@ -241,11 +241,15 @@ A quick note, if you create any VMs as part of a project, and you don't check th
 A quick way to check is to go to Azure Resource Manager > Tools > Resource Graph Explorer, paste in the following query, then run it.
 
 Resources
+
 | where type has "microsoft.network/networkinterfaces"
+
 | where "{nicWithPrivateEndpoints}" !has id
+
 | where properties !has 'virtualmachine'
 
-More details:https://www.geeksforgeeks.org/devops/microsoft-azure-find-orphaned-network-interface-cardsnics/
+
+More details: https://www.geeksforgeeks.org/devops/microsoft-azure-find-orphaned-network-interface-cardsnics/
 
 ![alt text](image-32.png)
 
